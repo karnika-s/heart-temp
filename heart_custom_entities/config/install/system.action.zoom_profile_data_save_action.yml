@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: zoom_profile_data_save_action
+label: 'Save zoom profile datas'
+type: zoom_profile_data
+plugin: entity:save_action:zoom_profile_data
+configuration: {  }

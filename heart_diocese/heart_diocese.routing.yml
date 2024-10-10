@@ -1,0 +1,71 @@
+heart_diocese.heart_diocese_invite:
+  path: '/heart-diocese/heart-diocese-invite'
+  defaults:
+    _title: 'Heart Diocese Invite'
+    _form: 'Drupal\heart_diocese\Form\HeartDioceseInvite'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'
+
+heart_diocese.fetch:
+  path: '/heart-diocese/admin-info'
+  defaults:
+    _title: 'Admin info'
+    _controller: '\Drupal\heart_diocese\Controller\HeartDioceseController::fetchAdminInfo'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'
+
+heart_diocese.remove:
+  path: '/heart-diocese/remove-admin-info'
+  defaults:
+    _title: 'Admin info remove'
+    _controller: '\Drupal\heart_diocese\Controller\HeartDioceseController::removeAdminInfo'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'
+
+heart_diocese.assigndiocesecontent:
+  path: '/heart-diocese/assign-diocese-admin-content'
+  defaults:
+    _title: 'Admin content to another diocese assign'
+    _controller: '\Drupal\heart_diocese\Controller\HeartDioceseController::assignDioceseContent'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'
+
+heart_diocese.heart_parish_invite:
+  path: '/heart-parish/heart-parish-invite'
+  defaults:
+    _title: 'Heart Parish Invite'
+    _form: 'Drupal\heart_diocese\Form\HeartParishInvite'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'
+
+heart_diocese.fetch_parish:
+  path: '/heart-parish/admin-info'
+  defaults:
+    _title: 'Admin info'
+    _controller: '\Drupal\heart_diocese\Controller\HeartParishController::fetchAdminInfo'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'
+
+heart_diocese.removeparish:
+  path: '/heart-parish/remove-admin-info'
+  defaults:
+    _title: 'Admin info remove'
+    _controller: '\Drupal\heart_diocese\Controller\HeartParishController::removeAdminInfo'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'
+
+heart_diocese.assignparishcontentparish:
+  path: '/heart-parish/assign-parish-admin-content'
+  defaults:
+    _title: 'Admin content to another parish assign'
+    _controller: '\Drupal\heart_diocese\Controller\HeartParishController::assignParishContent'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator+consultant'

@@ -1,0 +1,149 @@
+entity.user_profile_data.collection:
+  title: 'User Profile Datas'
+  description: 'List of user profile datas.'
+  route_name: entity.user_profile_data.collection
+  parent: system.admin_content
+
+entity.zoom_profile_data.collection:
+  title: 'Zoom Profile Datas'
+  description: 'List of zoom profile datas.'
+  route_name: entity.zoom_profile_data.collection
+  parent: system.admin_content
+
+entity.pdf_resource.collection:
+  title: 'PDF resource'
+  description: 'List of PDF resource.'
+  route_name: entity.pdf_resource.collection
+  parent: system.admin_content
+
+entity.event.collection:
+  title: 'Events'
+  description: 'List of eventss.'
+  route_name: entity.event.collection
+  parent: system.admin_content
+
+entity.heart_video_resource.settings:
+  title: 'Heart video resource'
+  description: 'Configure a Heart video resource entity type.'
+  route_name:  entity.heart_video_resource.settings
+  parent: system.admin_structure
+
+entity.heart_video_resource.collection:
+  title: 'Heart video resources'
+  description: 'List of heart video resources.'
+  route_name: entity.heart_video_resource.collection
+  parent: system.admin_content
+
+entity.heart_diocese_data.settings:
+  title: 'Heart Diocese data'
+  description: 'Configure a Heart Diocese data entity type.'
+  route_name:  entity.heart_diocese_data.settings
+  parent: system.admin_structure
+
+entity.heart_diocese_data.collection:
+  title: 'Heart Diocese datas'
+  description: 'List of heart diocese datas.'
+  route_name: entity.heart_diocese_data.collection
+  parent: system.admin_content
+
+entity.heart_course.settings:
+  title: 'Heart Course'
+  description: 'Configure a Heart Course entity type.'
+  route_name:  entity.heart_course.settings
+  parent: system.admin_structure
+
+entity.heart_course.collection:
+  title: 'Heart Courses'
+  description: 'List of heart courses.'
+  route_name: entity.heart_course.collection
+  parent: system.admin_content
+
+entity.heart_email_template.collection:
+  title: 'EmailTemplates'
+  description: 'List of emailtemplates.'
+  route_name: entity.heart_email_template.collection
+  parent: system.admin_content
+
+entity.course_product.collection:
+  title: 'Course Products'
+  description: 'List of course products.'
+  route_name: entity.course_product.collection
+  parent: system.admin_content
+
+entity.heart_license.settings:
+  title: 'Heart license'
+  description: 'Configure a Heart license entity type.'
+  route_name:  entity.heart_license.settings
+  parent: system.admin_structure
+
+entity.heart_license.collection:
+  title: 'Heart licenses'
+  description: 'List of heart licenses.'
+  route_name: entity.heart_license.collection
+  parent: system.admin_content
+
+entity.heart_parish_data.collection:
+  title: 'Heart Parish Datas'
+  description: 'List of heart parish datas.'
+  route_name: entity.heart_parish_data.collection
+  parent: system.admin_content
+
+entity.heart_class.collection:
+  title: 'Heart Classes'
+  description: 'List of heart classes.'
+  route_name: entity.heart_class.collection
+  parent: system.admin_content
+
+entity.class_invitation.collection:
+  title: 'Class Invitations'
+  description: 'List of class invitations.'
+  route_name: entity.class_invitation.collection
+  parent: system.admin_content
+
+entity.heart_progress_tracker_type.collection:
+  title: 'Heart progress tracker types'
+  description: 'Manage and CRUD actions on Heart progress tracker type.'
+  parent: system.admin_structure
+  route_name: entity.heart_progress_tracker_type.collection
+
+entity.heart_progress_tracker.collection:
+  title: 'Heart progress trackers'
+  description: 'List of heart progress trackers.'
+  route_name: entity.heart_progress_tracker.collection
+  parent: system.admin_content
+
+entity.heart_user_ref_data.settings:
+  title: 'Heart User Ref Data'
+  description: 'Configure a Heart User Ref Data entity type.'
+  route_name:  entity.heart_user_ref_data.settings
+  parent: system.admin_structure
+
+entity.heart_user_ref_data.collection:
+  title: 'Heart User Ref Datas'
+  description: 'List of heart user ref datas.'
+  route_name: entity.heart_user_ref_data.collection
+  parent: system.admin_content
+
+entity.heart_certificate.collection:
+  title: 'Certificates'
+  description: 'List of certificates.'
+  route_name: entity.heart_certificate.collection
+  parent: system.admin_content
+
+entity.heart_code_redeem.settings:
+  title: 'Heart code redeem'
+  description: 'Configure a Heart code redeem entity type.'
+  route_name:  entity.heart_code_redeem.settings
+  parent: system.admin_structure
+
+entity.heart_code_redeem.collection:
+  title: 'Heart code redeems'
+  description: 'List of heart code redeems.'
+  route_name: entity.heart_code_redeem.collection
+  parent: system.admin_content
+
+entity.heart_access_code.collection:
+  title: 'Heart Access Codes'
+  description: 'List of heart access codes.'
+  route_name: entity.heart_access_code.collection
+  parent: system.admin_content

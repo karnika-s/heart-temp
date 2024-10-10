@@ -1,0 +1,5 @@
+name: 'Heart Certifications'
+type: module
+description: 'Manage Certifications.'
+package: 'custom'
+core_version_requirement: ^10 || ^11

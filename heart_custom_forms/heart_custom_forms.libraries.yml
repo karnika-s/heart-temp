@@ -1,0 +1,7 @@
+heart_custom_forms:
+  js:
+    js/heart-custom-forms.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal.dialog.ajax
+    - core/jquery.form

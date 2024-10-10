@@ -1,0 +1,35 @@
+{{ form.form_build_id }}
+{{ form.form_token }}
+{{ form.form_id }}
+
+<div class="form-inline form-class-setup">
+	{{ form.field_diocese }}
+	{{ form.field_parish }}
+	{{ form.select_class }}
+	{{ form.class_identifier }}
+	{{ form.invite_facilitator }}
+	<div class="form-item">
+		<label>{{ 'Licenses:'|t }}</label>
+		<div class="form-element-item">
+			{{ form.classinfo }}
+		</div>
+	</div>
+	<div class="form-item">
+		<label></label>
+		<div class="form-element-item">
+			<div class="fs-row">
+				<div class="fs-col-4">
+					<div class="text-primary font-size-12">{{ 'Add Licenses to Class'|t }}</div>
+				</div>
+				<div class="fs-col-4">
+					{{ form.add_licenses }}
+				</div>
+				<div class="fs-col-4">
+					{{ form.add_license_button }}
+				</div>
+			</div>
+		</div>
+	</div>
+	{{ form.licenses_applied }}
+</div>
+{{ form.actions }}

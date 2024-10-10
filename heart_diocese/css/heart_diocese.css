@@ -1,0 +1,57 @@
+a[class*="edit-this-"] {
+  cursor: pointer;
+}
+.manage-diocese-edit-admins {
+  position: relative;
+  display: none;
+}
+.manage-diocese-edit-admins .right {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.heart-diocese-heart-diocese-invite .form-item-diocese-admin-list-upload {
+  display: none;
+}
+
+.delete-diocese-admin-prompt {
+  display: none;
+}
+
+.button.ui-dialog-titlebar-close {
+  display: none;
+}
+
+#dialog-user-profile-edit-form {
+  display: none;
+}
+
+.manage-parish-edit-admins {
+  display: none;
+}
+
+.heart-parish-heart-parish-invite .form-item-parish-admin-list-upload {
+  display: none;
+}
+
+.delete-parish-admin-prompt {
+  display: none;
+}
+.heart-diocese-heart-diocese-invite,
+.heart-parish-heart-parish-invite {
+  position: relative;
+}
+.heart-diocese-heart-diocese-invite .form-item,
+.heart-parish-heart-parish-invite .form-item {
+  margin-bottom: 0;
+}
+.heart-diocese-heart-diocese-invite .description,
+.heart-parish-heart-parish-invite .description {
+  margin-left: 131px;
+}
+.heart-diocese-heart-diocese-invite .form-actions,
+.heart-parish-heart-parish-invite .form-actions {
+  position: absolute;
+  top: 0;
+  left: 46%;
+}

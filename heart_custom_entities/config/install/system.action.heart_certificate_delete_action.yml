@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_certificate_delete_action
+label: 'Delete certificates'
+type: heart_certificate
+plugin: entity:delete_action:heart_certificate
+configuration: {  }

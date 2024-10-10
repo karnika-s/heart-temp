@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_diocese_data_save_action
+label: 'Save heart diocese datas'
+type: heart_diocese_data
+plugin: entity:save_action:heart_diocese_data
+configuration: {  }

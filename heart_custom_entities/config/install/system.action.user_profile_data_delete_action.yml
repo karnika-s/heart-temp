@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: user_profile_data_delete_action
+label: 'Delete user profile datas'
+type: user_profile_data
+plugin: entity:delete_action:user_profile_data
+configuration: {  }

@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_certificate_save_action
+label: 'Save certificates'
+type: heart_certificate
+plugin: entity:save_action:heart_certificate
+configuration: {  }

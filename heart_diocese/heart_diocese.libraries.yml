@@ -1,0 +1,10 @@
+heart_diocese:
+  css:
+    theme:
+      css/heart_diocese.css: {}
+  js:
+    js/heart_diocese.js : {}
+  dependencies:
+    - core/jquery
+    - jquery_once/jquery.once
+    - core/drupal.dialog

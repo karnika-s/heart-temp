@@ -1,0 +1,7 @@
+services:
+  drush.commands.custom_user_update:
+    class: Drupal\heart_custom_forms\Commands\UserUpdateCommands
+    tags:
+      - { name: drush.command }
+    # Add any dependencies you need here.
+    arguments: ['@entity_type.manager', '@logger.channel.default']

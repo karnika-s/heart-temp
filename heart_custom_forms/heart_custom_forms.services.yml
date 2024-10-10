@@ -1,0 +1,26 @@
+services:
+  heart_custom_forms.heart_custom_service:
+    class: Drupal\heart_custom_forms\HeartCustomService
+    arguments: ["@entity_type.manager", "@database", "@language_manager"]
+
+  heart_custom_forms.twig.GetDataInView:
+    class: Drupal\heart_custom_forms\Controller\GetDataInView
+    arguments:
+      [
+        "@entity_type.manager",
+        "@request_stack",
+        "@messenger",
+        "@heart_custom_forms.heart_custom_service",
+        "@database",
+        "@tempstore.private",
+        "@current_user",
+        "@language_manager",
+      ]
+    tags:
+      - { name: twig.extension }
+
+  heart_custom_forms.redirect_authenticated_subscriber:
+    class: Drupal\heart_custom_forms\EventSubscriber\RedirectAuthenticatedSubscriber
+    arguments: ["@current_user", "@entity_type.manager"]
+    tags:
+      - { name: event_subscriber }

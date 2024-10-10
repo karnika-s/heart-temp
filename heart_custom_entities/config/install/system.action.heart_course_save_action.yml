@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_course_save_action
+label: 'Save heart courses'
+type: heart_course
+plugin: entity:save_action:heart_course
+configuration: {  }

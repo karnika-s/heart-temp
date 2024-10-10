@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_class_delete_action
+label: 'Delete heart classes'
+type: heart_class
+plugin: entity:delete_action:heart_class
+configuration: {  }

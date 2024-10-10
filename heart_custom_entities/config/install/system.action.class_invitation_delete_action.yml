@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: class_invitation_delete_action
+label: 'Delete class invitations'
+type: class_invitation
+plugin: entity:delete_action:class_invitation
+configuration: {  }

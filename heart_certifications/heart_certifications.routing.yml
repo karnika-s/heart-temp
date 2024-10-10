@@ -1,0 +1,7 @@
+heart_certifications.download_pdf:
+  path: '/certificate/download'
+  defaults:
+    _controller: '\Drupal\heart_certifications\Controller\CertificateOperationController::downloadPdf'
+    _title: 'Download PDF'
+  requirements:
+    _permission: 'access content'

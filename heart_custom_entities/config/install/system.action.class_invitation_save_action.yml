@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: class_invitation_save_action
+label: 'Save class invitations'
+type: class_invitation
+plugin: entity:save_action:class_invitation
+configuration: {  }

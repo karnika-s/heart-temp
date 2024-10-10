@@ -1,0 +1,5 @@
+name: 'Heart custom entities'
+type: module
+description: 'Custom module containing Custom entities.'
+package: 'custom'
+core_version_requirement: ^10 || ^11

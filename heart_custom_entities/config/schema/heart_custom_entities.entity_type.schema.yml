@@ -1,0 +1,12 @@
+heart_custom_entities.heart_progress_tracker_type.*:
+  type: config_entity
+  label: 'Heart progress tracker type config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string

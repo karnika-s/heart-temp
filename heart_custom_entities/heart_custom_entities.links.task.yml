@@ -1,0 +1,214 @@
+entity.user_profile_data.collection:
+  title: 'User Profile Datas'
+  route_name: entity.user_profile_data.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.zoom_profile_data.collection:
+  title: 'Zoom Profile Datas'
+  route_name: entity.zoom_profile_data.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.pdf_resource.collection:
+  title: 'PDF resource'
+  route_name: entity.pdf_resource.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.event.collection:
+  title: 'Events'
+  route_name: entity.event.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_video_resource.settings:
+  title: 'Settings'
+  route_name: entity.heart_video_resource.settings
+  base_route: entity.heart_video_resource.settings
+entity.heart_video_resource.view:
+  title: 'View'
+  route_name: entity.heart_video_resource.canonical
+  base_route: entity.heart_video_resource.canonical
+entity.heart_video_resource.edit_form:
+  title: 'Edit'
+  route_name: entity.heart_video_resource.edit_form
+  base_route: entity.heart_video_resource.canonical
+entity.heart_video_resource.delete_form:
+  title: 'Delete'
+  route_name: entity.heart_video_resource.delete_form
+  base_route: entity.heart_video_resource.canonical
+  weight: 10
+entity.heart_video_resource.collection:
+  title: 'Heart video resources'
+  route_name: entity.heart_video_resource.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_diocese_data.settings:
+  title: 'Settings'
+  route_name: entity.heart_diocese_data.settings
+  base_route: entity.heart_diocese_data.settings
+entity.heart_diocese_data.view:
+  title: 'View'
+  route_name: entity.heart_diocese_data.canonical
+  base_route: entity.heart_diocese_data.canonical
+entity.heart_diocese_data.edit_form:
+  title: 'Edit'
+  route_name: entity.heart_diocese_data.edit_form
+  base_route: entity.heart_diocese_data.canonical
+entity.heart_diocese_data.delete_form:
+  title: 'Delete'
+  route_name: entity.heart_diocese_data.delete_form
+  base_route: entity.heart_diocese_data.canonical
+  weight: 10
+entity.heart_diocese_data.collection:
+  title: 'Heart Diocese datas'
+  route_name: entity.heart_diocese_data.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_course.settings:
+  title: 'Settings'
+  route_name: entity.heart_course.settings
+  base_route: entity.heart_course.settings
+entity.heart_course.collection:
+  title: 'Heart Courses'
+  route_name: entity.heart_course.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_email_template.collection:
+  title: 'EmailTemplates'
+  route_name: entity.heart_email_template.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.course_product.collection:
+  title: 'Course Products'
+  route_name: entity.course_product.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_license.settings:
+  title: 'Settings'
+  route_name: entity.heart_license.settings
+  base_route: entity.heart_license.settings
+entity.heart_license.collection:
+  title: 'Heart licenses'
+  route_name: entity.heart_license.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_parish_data.collection:
+  title: 'Heart Parish Datas'
+  route_name: entity.heart_parish_data.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_class.collection:
+  title: 'Heart Classes'
+  route_name: entity.heart_class.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_progress_tracker.view:
+  title: 'View'
+  route_name: entity.heart_progress_tracker.canonical
+  base_route: entity.heart_progress_tracker.canonical
+entity.heart_progress_tracker.edit_form:
+  title: 'Edit'
+  route_name: entity.heart_progress_tracker.edit_form
+  base_route: entity.heart_progress_tracker.canonical
+entity.heart_progress_tracker.delete_form:
+  title: 'Delete'
+  route_name: entity.heart_progress_tracker.delete_form
+  base_route: entity.heart_progress_tracker.canonical
+  weight: 10
+entity.heart_progress_tracker.collection:
+  title: 'Heart progress trackers'
+  route_name: entity.heart_progress_tracker.collection
+  base_route: system.admin_content
+  weight: 10
+entity.heart_progress_tracker_type.edit_form:
+  title: 'Edit'
+  route_name: entity.heart_progress_tracker_type.edit_form
+  base_route: entity.heart_progress_tracker_type.edit_form
+entity.heart_progress_tracker_type.collection:
+  title: 'List'
+  route_name: entity.heart_progress_tracker_type.collection
+  base_route: entity.heart_progress_tracker_type.collection
+
+entity.class_invitation.collection:
+  title: 'Class Invitations'
+  route_name: entity.class_invitation.collection
+entity.heart_user_ref_data.settings:
+  title: 'Settings'
+  route_name: entity.heart_user_ref_data.settings
+  base_route: entity.heart_user_ref_data.settings
+entity.heart_user_ref_data.view:
+  title: 'View'
+  route_name: entity.heart_user_ref_data.canonical
+  base_route: entity.heart_user_ref_data.canonical
+entity.heart_user_ref_data.edit_form:
+  title: 'Edit'
+  route_name: entity.heart_user_ref_data.edit_form
+  base_route: entity.heart_user_ref_data.canonical
+entity.heart_user_ref_data.delete_form:
+  title: 'Delete'
+  route_name: entity.heart_user_ref_data.delete_form
+  base_route: entity.heart_user_ref_data.canonical
+  weight: 10
+entity.heart_user_ref_data.collection:
+  title: 'Heart User Ref Datas'
+  route_name: entity.heart_user_ref_data.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_certificate.collection:
+  title: 'Certificates'
+  route_name: entity.heart_certificate.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_code_redeem.settings:
+  title: 'Settings'
+  route_name: entity.heart_code_redeem.settings
+  base_route: entity.heart_code_redeem.settings
+entity.heart_code_redeem.view:
+  title: 'View'
+  route_name: entity.heart_code_redeem.canonical
+  base_route: entity.heart_code_redeem.canonical
+entity.heart_code_redeem.edit_form:
+  title: 'Edit'
+  route_name: entity.heart_code_redeem.edit_form
+  base_route: entity.heart_code_redeem.canonical
+entity.heart_code_redeem.delete_form:
+  title: 'Delete'
+  route_name: entity.heart_code_redeem.delete_form
+  base_route: entity.heart_code_redeem.canonical
+  weight: 10
+entity.heart_code_redeem.collection:
+  title: 'Heart code redeems'
+  route_name: entity.heart_code_redeem.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.heart_access_code.view:
+  title: 'View'
+  route_name: entity.heart_access_code.canonical
+  base_route: entity.heart_access_code.canonical
+entity.heart_access_code.edit_form:
+  title: 'Edit'
+  route_name: entity.heart_access_code.edit_form
+  base_route: entity.heart_access_code.canonical
+entity.heart_access_code.delete_form:
+  title: 'Delete'
+  route_name: entity.heart_access_code.delete_form
+  base_route: entity.heart_access_code.canonical
+  weight: 10
+entity.heart_access_code.collection:
+  title: 'Heart Access Codes'
+  route_name: entity.heart_access_code.collection
+  base_route: system.admin_content
+  weight: 10

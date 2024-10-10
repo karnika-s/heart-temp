@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_class_save_action
+label: 'Save heart classes'
+type: heart_class
+plugin: entity:save_action:heart_class
+configuration: {  }

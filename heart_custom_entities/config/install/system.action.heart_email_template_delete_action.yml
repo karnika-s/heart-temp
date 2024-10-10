@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_email_template_delete_action
+label: 'Delete emailtemplates'
+type: heart_email_template
+plugin: entity:delete_action:heart_email_template
+configuration: {  }

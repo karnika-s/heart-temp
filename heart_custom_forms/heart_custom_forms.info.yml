@@ -1,0 +1,5 @@
+name: 'Heart Custom Forms'
+type: module
+description: 'Module to create custom forms.'
+package: Custom
+core_version_requirement: ^10 || ^11

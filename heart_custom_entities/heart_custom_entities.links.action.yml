@@ -1,0 +1,112 @@
+user_profile_data.add_form:
+  title: 'Add user profile data'
+  route_name: entity.user_profile_data.add_form
+  appears_on:
+    - entity.user_profile_data.collection
+
+zoom_profile_data.add_form:
+  title: 'Add zoom profile data'
+  route_name: entity.zoom_profile_data.add_form
+  appears_on:
+    - entity.zoom_profile_data.collection
+
+pdf_resource.add_form:
+  title: 'Add pdf resource'
+  route_name: entity.pdf_resource.add_form
+  appears_on:
+    - entity.pdf_resource.collection
+
+event.add_form:
+  title: 'Add events'
+  route_name: entity.event.add_form
+  appears_on:
+    - entity.event.collection
+
+heart_video_resource.add_form:
+  title: 'Add heart video resource'
+  route_name: entity.heart_video_resource.add_form
+  appears_on:
+    - entity.heart_video_resource.collection
+
+heart_diocese_data.add_form:
+  title: 'Add heart diocese data'
+  route_name: entity.heart_diocese_data.add_form
+  appears_on:
+    - entity.heart_diocese_data.collection
+
+heart_course.add_form:
+  title: 'Add heart course'
+  route_name: entity.heart_course.add_form
+  appears_on:
+    - entity.heart_course.collection
+
+heart_email_template.add_form:
+  title: 'Add emailtemplates'
+  route_name: entity.heart_email_template.add_form
+  appears_on:
+    - entity.heart_email_template.collection
+
+course_product.add_form:
+  title: 'Add course product'
+  route_name: entity.course_product.add_form
+  appears_on:
+    - entity.course_product.collection
+
+heart_license.add_form:
+  title: 'Add heart license'
+  route_name: entity.heart_license.add_form
+  appears_on:
+    - entity.heart_license.collection
+
+heart_parish_data.add_form:
+  title: 'Add heart parish data'
+  route_name: entity.heart_parish_data.add_form
+  appears_on:
+    - entity.heart_parish_data.collection
+
+heart_class.add_form:
+  title: 'Add heart class'
+  route_name: entity.heart_class.add_form
+  appears_on:
+    - entity.heart_class.collection
+
+heart_progress_tracker.type_add:
+  title: 'Add heart progress tracker type'
+  route_name: entity.heart_progress_tracker_type.add_form
+  appears_on:
+    - entity.heart_progress_tracker_type.collection
+
+heart_progress_tracker.add_page:
+  title: 'Add heart progress tracker'
+  route_name: entity.heart_progress_tracker.add_page
+  appears_on:
+    - entity.heart_progress_tracker.collection
+
+class_invitation.add_form:
+  title: 'Add class invitation'
+  route_name: entity.class_invitation.add_form
+  appears_on:
+    - entity.class_invitation.collection
+heart_user_ref_data.add_form:
+  title: 'Add heart user ref data'
+  route_name: entity.heart_user_ref_data.add_form
+  appears_on:
+    - entity.heart_user_ref_data.collection
+
+heart_certificate.add_form:
+  title: 'Add certificate'
+  route_name: entity.heart_certificate.add_form
+  appears_on:
+    - entity.heart_certificate.collection
+
+heart_code_redeem.add_form:
+  title: 'Add heart code redeem'
+  route_name: entity.heart_code_redeem.add_form
+  appears_on:
+    - entity.heart_code_redeem.collection
+
+heart_access_code.add_form:
+  title: 'Add heart access code'
+  route_name: entity.heart_access_code.add_form
+  appears_on:
+    - entity.heart_access_code.collection

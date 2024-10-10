@@ -1,0 +1,32 @@
+{{ form.form_build_id }}
+{{ form.form_token }}
+{{ form.form_id }}
+
+<div class="fs-row">
+	<div class="fs-col-6">
+		{{ form.select_class }}
+		<div class="form-item form-class-include">
+			<label>Class Includes:</label>
+			<div class="text-primary">
+				{{ form.class_includes }}
+			</div>
+		</div>
+	</div>
+	<div class="fs-col-6">
+		{{ form.customer_contact_name }}
+		{{ form.customer_contact_phone }}
+	</div>
+</div>
+<div class="fs-row">
+	<div class="fs-col-6">
+		{{ form.item_number }}
+		{{ form.customer_number }}
+		{{ form.license_quantity }}
+	</div>
+	<div class="fs-col-6">
+		{{ form.customer_contact_email }}
+		{{ form.comment }}
+	</div>
+</div>
+<p class="text-primary text-right font-size-12">{{'You will receive an email reciept when your purchase request has been processed.'|t}}</p>
+{{ form.actions }}

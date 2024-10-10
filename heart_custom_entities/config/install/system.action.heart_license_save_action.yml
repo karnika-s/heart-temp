@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_license_save_action
+label: 'Save heart licenses'
+type: heart_license
+plugin: entity:save_action:heart_license
+configuration: {  }

@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_license_delete_action
+label: 'Delete heart licenses'
+type: heart_license
+plugin: entity:delete_action:heart_license
+configuration: {  }

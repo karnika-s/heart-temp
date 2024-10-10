@@ -1,0 +1,95 @@
+entity.pdf_resource.settings:
+  path: 'admin/structure/pdf-resource-entities'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\PdfResourceSettingsForm'
+    _title: 'pdf resource'
+  requirements:
+    _permission: 'administer pdf_resource'
+
+entity.heart_video_resource.settings:
+  path: 'admin/structure/heart-video-resource'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartVideoResourceSettingsForm'
+    _title: 'Heart video resource'
+  requirements:
+    _permission: 'administer heart_video_resource'
+
+entity.heart_diocese_data.settings:
+  path: 'admin/structure/heart-diocese-data'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartDioceseDataSettingsForm'
+    _title: 'Heart Diocese data'
+  requirements:
+    _permission: 'administer heart_diocese_data'
+
+entity.heart_course.settings:
+  path: 'admin/structure/heart-course'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartCourseSettingsForm'
+    _title: 'Heart Course'
+  requirements:
+    _permission: 'administer heart_course'
+
+entity.heart_license.settings:
+  path: 'admin/structure/heart-license'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartLicenseSettingsForm'
+    _title: 'Heart license'
+  requirements:
+    _permission: 'administer heart_license'
+
+entity.heart_user_ref_data.settings:
+  path: 'admin/structure/heart-user-ref-data'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartUserRefDataSettingsForm'
+    _title: 'Heart User Ref Data'
+  requirements:
+    _permission: 'administer heart_user_ref_data'
+
+entity.heart_code_redeem.settings:
+  path: 'admin/structure/heart-code-redeem'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartCodeRedeemSettingsForm'
+    _title: 'Heart code redeem'
+  requirements:
+    _permission: 'administer heart_code_redeem'
+
+entity.heart_email_template.settings:
+  path: '/admin/structure/heart-email-template-settings'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartEmailTemplateSettingsForm'
+    _title: 'Heart Email Template Settings'
+  requirements:
+    _permission: 'administer heart_email_template'
+
+entity.event.settings:
+  path: '/admin/structure/heart-events'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartEventsSettingsForm'
+    _title: 'Heart Events Settings'
+  requirements:
+    _permission: 'administer event'
+
+entity.heart_certificate.settings:
+  path: '/admin/structure/heart-certificates'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\HeartCertificateSettingsForm'
+    _title: 'Heart Certificate Settings'
+  requirements:
+    _permission: 'administer heart_certificate'
+
+entity.course_product.settings:
+  path: '/admin/structure/heart-course-product'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\CourseProductSettingsForm'
+    _title: 'Heart Course Product Settings'
+  requirements:
+    _permission: 'administer heart_certificate'
+
+entity.zoom_profile_data.settings:
+  path: '/admin/structure/heart-zoom-profile'
+  defaults:
+    _form: '\Drupal\heart_custom_entities\Form\ZoomProfileDataFormSettingsForm'
+    _title: 'Heart Zoom Profile Settings'
+  requirements:
+    _permission: 'administer zoom_profile_data'

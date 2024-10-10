@@ -1,0 +1,870 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Heart Custom Forms module.
+ */
+
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_data().
+ */
+function heart_custom_forms_views_data() {
+
+  $data['views']['table']['group'] = t('Custom Global');
+  $data['views']['table']['join'] = [
+    // #global is a special flag which allows a table to appear all the time.
+    '#global' => [],
+  ];
+
+  $data['views']['heart_custom_forms_userroleandsubrole'] = [
+    'title' => t('User Role And Sub Role'),
+    'help' => t('Find print book to convert into ebook.'),
+    'field' => [
+      'id' => 'heart_custom_forms_userroleandsubrole',
+    ],
+  ];
+
+  $data['views']['heart_custom_forms_user_full_name'] = [
+    'title' => t('User First Name And Last Name'),
+    'help' => t('Convert user name into first name and last name'),
+    'field' => [
+      'id' => 'heart_custom_forms_user_full_name',
+    ],
+  ];
+
+  $data['views']['heart_custom_forms_access_class'] = [
+    'title' => t('Access Class Button'),
+    'help' => t('Button to access moodle course'),
+    'field' => [
+      'id' => 'heart_custom_forms_access_class',
+    ],
+  ];
+
+  $data['views']['heart_custom_forms_class_progress'] = [
+    'title' => t('Class Progress'),
+    'help' => t('Student class progress'),
+    'field' => [
+      'id' => 'heart_custom_forms_class_progress',
+    ],
+  ];
+
+  return $data;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function heart_custom_forms_theme($existing, $type, $theme, $path) {
+  $add_event_form_data = $add_resource_pdf_form_data = [];
+  return [
+    'add_event_form' => [
+      'variables' => [
+        'content' => $add_event_form_data,
+      ],
+    ],
+    'add_resource_pdf_form' => [
+      'variables' => [
+        'content' => $add_resource_pdf_form_data,
+      ],
+    ],
+    'reorder_licenses' => [
+      'render element' => 'form',
+      'template' => 'form--reorder-licenses',
+    ],
+    'class_setup' => [
+      'render element' => 'form',
+      'template' => 'form--class-setup',
+    ],
+  ];
+}
+
+/**
+ * User insertion for sending mail notification.
+ */
+function heart_custom_forms_user_insert(EntityInterface $user) {
+  // Get the current path.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $route_match = \Drupal::service('current_route_match');
+  $route_name = $route_match->getRouteName();
+
+  // Specify the admin route.
+  $admin_paths = [
+    '/admin/people/create',
+  ];
+  if (in_array($current_path, $admin_paths)) {
+    $user_id = $user->id();
+    $custom_entity = \Drupal::entityTypeManager()->getStorage('user_profile_data');
+    $query = $custom_entity->getQuery()
+      ->condition('user_data', $user_id)
+      ->accessCheck(FALSE);
+    $entity_ids = $query->execute();
+
+    if (empty($entity_ids) && !empty($user)) {
+      // Create the entity properties.
+      $custom_entity = \Drupal::entityTypeManager()
+        ->getStorage('user_profile_data')
+        ->create([
+          'user_data' => $user_id,
+        ]);
+      // Save the custom entity.
+      $custom_entity->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function heart_custom_forms_views_query_alter($view, $query) {
+  if ($view->storage->id() == 'product_vault' && $view->getDisplay()->display['id'] == 'product_vault_block') {
+    $definition = [
+      'table' => 'user_profile_data_field_data',
+      'field' => 'user_data',
+      'left_table' => 'commerce_product_field_data',
+      'left_field' => 'uid',
+    ];
+    $username = [
+      'table' => 'users_field_data',
+      'field' => 'uid',
+      'left_table' => 'commerce_product_field_data',
+      'left_field' => 'uid',
+    ];
+    $videokeyword = [
+      'table' => 'heart_video_resource__video_keywords',
+      'field' => 'bundle',
+      'left_table' => 'commerce_product_field_data',
+      'left_field' => 'type',
+    ];
+    $eventkeyword = [
+      'table' => 'event__keywords',
+      'field' => 'bundle',
+      'left_table' => 'commerce_product_field_data',
+      'left_field' => 'type',
+    ];
+    $pdfkeyword = [
+      'table' => 'pdf_resource__rl_keywords',
+      'field' => 'bundle',
+      'left_table' => 'commerce_product_field_data',
+      'left_field' => 'type',
+    ];
+    $join = Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
+    $query->addRelationship('user_profile_data_field_data', $join, 'userdata');
+    $userfieldjoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $username);
+    $query->addRelationship('users_field_data', $userfieldjoin, 'usernamedata');
+    $videojoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $videokeyword);
+    $query->addRelationship('heart_video_resource__video_keywords', $videojoin, 'videokeyword');
+    $eventjoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $eventkeyword);
+    $query->addRelationship('event__keywords', $eventjoin, 'eventkeyword');
+    $pdfjoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $pdfkeyword);
+    $query->addRelationship('pdf_resource__rl_keywords', $pdfjoin, 'eventkeyword');
+    $exposed_filter_value = $view->exposed_raw_input['combine'];
+    if (array_key_exists(2, $query->where)) {
+      $condition_keys = $query->where[2]['conditions'];
+    }
+    else {
+      $condition_keys = [];
+    }
+    if (!empty($condition_keys)) {
+      foreach ($condition_keys as $key => $value) {
+        if (
+          array_search("commerce_product_field_data.title LIKE :views_combine_0", [$condition_keys[$key]['field']]) !== FALSE
+          && $value['field'] == "commerce_product_field_data.title LIKE :views_combine_0"
+        ) {
+          // If ($key == '0') {.
+          $value = $query->where[2]['conditions'][$key]['value'][':views_combine_0'];
+          if ($value != NULL) {
+            unset($query->where[2]['conditions'][$key]);
+            // Check if the second WHERE array already exists,
+            // if not, create it.
+            $name = [
+              'name' => str_replace('%', '', $value),
+              'vid' => 'rl_keywords',
+            ];
+            $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties($name);
+
+            if (!isset($query->where[2])) {
+              $query->where[2] = [
+                'conditions' => [],
+                'args' => [],
+                // Specify the type of condition (AND or OR)
+                'type' => 'OR',
+              ];
+            }
+            if (!empty($terms)) {
+              $term = reset($terms);
+              $term_id = $term->tid->value;
+              $query->where[2]['conditions'][] = [
+                'field' => "heart_video_resource__video_keywords.video_keywords_target_id",
+                "value" => $value,
+                "operator" => "IN",
+              ];
+              $query->where[2]['conditions'][] = [
+                'field' => "event__keywords.keywords_target_id",
+                "value" => $value,
+                "operator" => "IN",
+              ];
+              $query->where[2]['conditions'][] = [
+                'field' => "pdf_resource__rl_keywords.rl_keywords_target_id",
+                "value" => $value,
+                "operator" => "IN",
+              ];
+            }
+            $query->where[2]['conditions'][] = [
+              'field' => "user_profile_data_field_data.first_name",
+              "value" => $value,
+              "operator" => "LIKE",
+            ];
+            $query->where[2]['conditions'][] = [
+              'field' => "user_profile_data_field_data.last_name",
+              "value" => $value,
+              "operator" => "LIKE",
+            ];
+            $query->where[2]['conditions'][] = [
+              'field' => "commerce_product_field_data.title",
+              "value" => $value,
+              "operator" => "LIKE",
+            ];
+            $query->where[2]['conditions'][] = [
+              'field' => "users_field_data.name",
+              "value" => $value,
+              "operator" => "LIKE",
+            ];
+          }
+        }
+        // }
+      }
+    }
+  }
+  if ($view->storage->id() == 'suggested_resources' && $view->getDisplay()->display['id'] == 'suggested_resources_block') {
+    $current_userid = \Drupal::currentUser()->id();
+    if ($query->where[1]['conditions'][1]['field'] == 'heart_progress_tracker__field_user_ref.field_user_ref_target_id') {
+      $query->where[1]['conditions'][1]['value'] = $current_userid;
+      $query->where[1]['conditions'][1]['operator'] = '!=';
+    }
+    if ($query->where[1]['conditions'][2]['field'] == 'heart_progress_tracker__field_percent_completion.field_percent_completion_value') {
+      $query->where[1]['conditions'][2]['value'] = intval($query->where[1]['conditions'][2]['value']);
+      $query->where[1]['conditions'][2]['operator'] = '>=';
+    }
+  }
+  if ($view->storage->id() == 'my_past_webinars' && $view->getDisplay()->display['id'] == 'page_1') {
+    if ($query->where[1]['conditions'][1]['field'] == 'heart_progress_tracker__field_percent_completion.field_percent_completion_value') {
+      $query->where[1]['conditions'][1]['value'] = intval($query->where[1]['conditions'][1]['value']);
+      $query->where[1]['conditions'][1]['operator'] = '>=';
+    }
+
+    // Ensure that the required relationships exist in the view.
+    // Add the necessary join for the taxonomy term.
+    $product_ref = [
+      'table' => 'heart_progress_tracker__field_product_ref',
+      'field' => 'entity_id',
+      'left_table' => 'heart_progress_tracker',
+      'left_field' => 'id',
+    ];
+    $referenced_video = [
+      'table' => 'commerce_product_field_data',
+      'field' => 'product_id',
+      'left_table' => 'heart_progress_tracker__field_product_ref',
+      'left_field' => 'field_product_ref_target_id',
+    ];
+    $commerce_product_referenced_video = [
+      'table' => 'commerce_product__field_referenced_video',
+      'field' => 'entity_id',
+      'left_table' => 'commerce_product_field_data',
+      'left_field' => 'product_id',
+    ];
+
+    $heart_video_resource = [
+      'table' => 'heart_video_resource_field_data',
+      'field' => 'id',
+      'left_table' => 'commerce_product__field_referenced_video',
+      'left_field' => 'field_referenced_video_target_id',
+    ];
+
+    $heart_video_resource_keywords = [
+      'table' => 'heart_video_resource__video_keywords',
+      'field' => 'entity_id',
+      'left_table' => 'heart_video_resource_field_data',
+      'left_field' => 'id',
+    ];
+
+    $heart_video_resource_category = [
+      'table' => 'heart_video_resource__video_category',
+      'field' => 'entity_id',
+      'left_table' => 'heart_video_resource_field_data',
+      'left_field' => 'id',
+    ];
+
+    // Join heart_progress_tracker__field_product_ref
+    // table to heart_progress_tracker table.
+    $productjoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $product_ref);
+    $query->addRelationship('heart_progress_tracker__field_product_ref', $productjoin, 'productref');
+    // Join commerce_product_field_data table to
+    // heart_progress_tracker table.
+    $videojoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $referenced_video);
+    $query->addRelationship('commerce_product_field_data', $videojoin, 'videokeywords');
+    // Join commerce_product__field_referenced_video
+    // table to heart_progress_tracker table.
+    $commerce_productvideojoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $commerce_product_referenced_video);
+    $query->addRelationship('commerce_product__field_referenced_video', $commerce_productvideojoin, 'commerce_productvideo');
+    // Join heart_video_resource_field_data
+    // table to heart_progress_tracker table.
+    $heart_video_resourcejoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $heart_video_resource);
+    $query->addRelationship('heart_video_resource_field_data', $heart_video_resourcejoin, 'heartvideoresource');
+
+    if (array_key_exists(1, $query->where)) {
+      $condition_keys = $query->where[1]['conditions'];
+    }
+    else {
+      $condition_keys = [];
+    }
+    if (!empty($condition_keys)) {
+      foreach ($condition_keys as $key => $value) {
+        if (
+          array_search("CONCAT_WS(' ', heart_progress_tracker.label, ' ', heart_video_resource_field_data_commerce_product__field_referenced_video.label) LIKE :views_combine", [$condition_keys[$key]['field']]) !== FALSE
+          && $value['field'] == "CONCAT_WS(' ', heart_progress_tracker.label, ' ', heart_video_resource_field_data_commerce_product__field_referenced_video.label) LIKE :views_combine"
+        ) {
+          $value = $query->where[1]['conditions'][$key]['value'][':views_combine'];
+          $terms = [];
+          if ($value != NULL) {
+            unset($query->where[1]['conditions'][$key]);
+            // Check if the second WHERE array already exists,
+            // if not, create it.
+            $valuename = str_replace('%', '', $value);
+            $name = [
+              'name' => trim($valuename),
+              'vid' => 'rl_keywords',
+            ];
+            $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties($name);
+            $categories = [];
+            if (empty($terms)) {
+              $name = [
+                'name' => trim($valuename),
+                'vid' => 'rl_categories',
+              ];
+              $categories = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties($name);
+            }
+
+            if (!isset($query->where[2])) {
+              $query->where[2] = [
+                'conditions' => [],
+                'args' => [],
+                // Specify the type of condition (AND or OR)
+                'type' => 'OR',
+              ];
+            }
+            if (!empty($terms)) {
+              // If terms then join keywords table to
+              // heart progress tracker view.
+              $heart_video_resource_keywordsjoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $heart_video_resource_keywords);
+              $query->addRelationship('heart_video_resource__video_keywords', $heart_video_resource_keywordsjoin, 'heartvideoresourcevideo_keywords');
+              $term = reset($terms);
+              $term_id = $term->tid->value;
+              $query->where[2]['conditions'][] = [
+                'field' => "heart_video_resource__video_keywords.video_keywords_target_id",
+                "value" => intval($term_id),
+                "operator" => "IN",
+              ];
+            }
+            elseif (!empty($categories)) {
+              // If categories then join categories
+              // table to heart progress tracker view.
+              $heart_video_resource_categoryjoin = Drupal::service('plugin.manager.views.join')->createInstance('standard', $heart_video_resource_category);
+              $query->addRelationship('heart_video_resource__video_category', $heart_video_resource_categoryjoin, 'heartvideoresourcevideo_category');
+              $category = reset($categories);
+              $category_id = $category->tid->value;
+              $query->where[2]['conditions'][] = [
+                'field' => "heart_video_resource__video_category.video_category_target_id",
+                "value" => intval($category_id),
+                "operator" => "IN",
+              ];
+            }
+            else {
+              $query->where[2]['conditions'][] = [
+                'field' => "heart_video_resource_field_data.label",
+                "value" => '%' . trim($valuename) . '%',
+                "operator" => "LIKE",
+              ];
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function heart_custom_forms_page_attachments(array &$attachments) {
+
+  // Get current path.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+
+  // Add library for manage diocese.
+  if ($current_path_alias == '/manage-account' || $current_path_alias == '/administrar-cuenta' || $current_path_alias == '/manage-students') {
+    $attachments['#attached']['library'][] = 'heart_custom_forms/heart_custom_forms';
+    $attachments['#attached']['library'][] = 'views/views.ajax';
+  }
+
+  // Add library for manage diocese.
+  if ($current_path_alias == '/sales-staff/manage' || $current_path_alias == '/personal-de-ventas/gestionar') {
+    $attachments['#attached']['library'][] = 'heart_custom_forms/heart_custom_forms';
+    $attachments['#attached']['library'][] = 'views/views.ajax';
+  }
+  // Add library for management dashboard.
+  if ($current_path_alias == '/management-dashboard' || $current_path_alias == '/panel-de-administración') {
+    $attachments['#attached']['library'][] = 'heart_custom_forms/heart_custom_forms';
+    $attachments['#attached']['library'][] = 'views/views.ajax';
+  }
+}
+
+/**
+ * Implements hook_commerce_order_update().
+ */
+function heart_custom_forms_commerce_order_update(OrderInterface $order) {
+  // Check if the order has been marked as paid.
+  if ($order->getState()->value == 'completed') {
+    // Load the stored registration data from temporary storage.
+    $tempstore = \Drupal::service('tempstore.private')->get('heart_custom_forms');
+
+    // Assuming the order items have the product variations.
+    $order_items = $order->getItems();
+    foreach ($order_items as $order_item) {
+      $purchased_entity = $order_item->getPurchasedEntity();
+      if ($purchased_entity) {
+        $product = $purchased_entity->getProduct();
+        $product_id = $product->id();
+        $product_type = $product->bundle();
+        $current_user_id = \Drupal::currentUser()->id();
+        $temp_store_key = 'registration_data_' . $product_type . $product_id . '_' . $current_user_id;
+        $registration_data = $tempstore->get($temp_store_key);
+
+        if ($registration_data) {
+          // Load user data if mail user exists.
+          $user = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['mail' => $registration_data['email']]);
+
+          // Check if user(s) with the given email exist.
+          if (!empty($user)) {
+            // Get the first user (assuming unique email addresses).
+            $user = reset($user);
+            // Get the user ID.
+            $userId = $user->id();
+            // Add entry for site user for registration.
+            \Drupal::service('heart_user_data.user_ref_data')->userRefDataAdd($userId, $product->getEntityTypeId(), $registration_data['redirect_webinar_id'], $product->bundle());
+          }
+          else {
+            // Get event id.
+            $event_id = $registration_data['redirect_webinar_id'];
+
+            // Load the event entity.
+            $event_entity = \Drupal::entityTypeManager()->getStorage('event')
+              ->load($product->field_event_reference->target_id);
+
+            // Save data in heart_event_registrants.
+            if ($event_entity) {
+              $entity_type = $product->getEntityTypeId();
+              $bundle = $product->bundle();
+
+              // Define the data to be inserted.
+              $registrant_data = [
+                'source_uid' => $current_user_id,
+                'registrant_email' => $registration_data['email'],
+                'first_name' => $registration_data['first_name'] ?? '',
+                'last_name' => $registration_data['last_name'] ?? '',
+                'phone_no' => $registration_data['phone'] ?? '',
+                'school' => $registration_data['school_name'] ?? '',
+                'city' => $registration_data['city'] ?? '',
+                'job_title' => $registration_data['job_title'] ?? '',
+                'state' => $registration_data['state'] ?? '',
+                'diocese' => $registration_data['diocese'] ?? NULL,
+                'ref_entity_type' => $entity_type,
+                'ref_entity_bundle' => $bundle,
+                'ref_entity_id' => $event_id,
+              ];
+
+              // Add registration for registrants apart from site users.
+              \Drupal::service('heart_webinar.event_registrants_service')->eventRegistrantsAdd($registrant_data);
+            }
+          }
+          heart_custom_forms_send_registrant_mail($product_id, $registration_data, $user, $userId);
+          // Clear the temporary storage.
+          $tempstore->delete($temp_store_key);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Send registrant confirm mail.
+ */
+function heart_custom_forms_send_registrant_mail($event_product_id, $values, $user = NULL, $userId = NULL) {
+  $event_entity = \Drupal::entityTypeManager()->getStorage('event')->load($event_product_id);
+  // Check if event is complimentary.,$userId.
+  if (!empty($event_entity) && $event_entity->item_cost->value == 'priced') {
+    // Format date for webinar event date.
+    $date = date('Y-m-d', (int) $event_entity->webinar_event_date->value);
+    if (!$user) {
+      $name = $values['first_name'] . " " . $values['last_name'];
+    }
+    else {
+      $users_profile_data = \Drupal::entityTypeManager()->getStorage('user_profile_data')->loadByProperties(['user_data' => $userId]);
+      $user_profile_data = reset($users_profile_data);
+      $name = $user_profile_data->first_name->value . " " . $user_profile_data->last_name->value;
+    }
+    // Format time for webinar event date.
+    $time = date('g:i A', (int) $event_entity->webinar_event_date->value);
+
+    $to = $values['email'];
+    // Prepare the template variables.
+    $translate = [
+      '[[User]]' => $name,
+      '[[Webinar_Title]]' => $event_entity->event_title->value,
+      '[[Webinar_Date]]' => $date,
+      '[[Webinar_Time]]' => $time,
+      '[[Webinar_Presenter]]' => $event_entity->presenter->value,
+      '[[url_en_datetime]]' => urlencode($date . 'T' . $time),
+      '[[url_en_title]]' => urlencode($event_entity->event_title->value),
+    ];
+    // Get email template ids.
+    $email_template_entity_ids = \Drupal::service('heart_misc.email_template_service')->emailTemplateIdsByTermName('Confirm Event Registration');
+
+    // Check if email template ids exist.
+    if (!empty($email_template_entity_ids)) {
+      \Drupal::service('heart_misc.send_mail_service')->heartSendMail($email_template_entity_ids, $translate, $to);
+    }
+    else {
+      // If email template not found.
+      \Drupal::service('messenger')->addError(t('Email not sent. Please contact the administrator.'));
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_build().
+ */
+function heart_custom_forms_views_pre_build(ViewExecutable $view) {
+  if ($view->id() == 'manage_classes' || $view->id() == 'view_licenses' || $view->id() == 'certificate_listing') {
+    $user_id = \Drupal::currentUser()->id();
+    $user_entity = \Drupal::entityTypeManager()->getStorage('user')->load($user_id);
+    $roles = $user_entity->getRoles();
+    $uid = $user_entity->id();
+
+    $user_profile_data = \Drupal::entityTypeManager()->getStorage('user_profile_data')->loadByProperties(['user_data' => $uid]);
+    if (!empty($user_profile_data)) {
+      $user_profile_data = reset($user_profile_data);
+      $userProfileId = $user_profile_data->id();
+    }
+    $userRefService = \Drupal::service('heart_user_data.user_ref_data');
+    $heartCustomService = \Drupal::service('heart_custom_forms.heart_custom_service');
+    if (in_array('diocesan_admin', $roles)) {
+      // Get diocese admin data.
+      $getdiocese = $heartCustomService->getDioceseAdminDiocese($userProfileId);
+      if (!empty($getdiocese)) {
+        $diocese_keys = array_keys($getdiocese);
+        $entity_ref_entity_id = $diocese_keys[1];
+
+        $view->setArguments([$entity_ref_entity_id]);
+      }
+      else {
+        $view->setArguments([]);
+      }
+    }
+    if (in_array('parish_admin', $roles)) {
+      // Get parish admin data.
+      $diocese_options = $heartCustomService->getParishAdminDiocese($userProfileId);
+      if (!empty($diocese_options)) {
+        $diocese_keys = array_keys($diocese_options);
+        $default_diocese = $diocese_keys[1];
+        $getparish = $heartCustomService->getParishAdminParish($userProfileId, $default_diocese);
+        if (!empty($getparish)) {
+          $parish_keys = array_keys($getparish);
+          $entity_ref_entity_id = $parish_keys[1];
+          $view->setArguments([$entity_ref_entity_id]);
+        }
+      }
+      else {
+        $view->setArguments([]);
+      }
+    }
+    if (in_array('facilitator', $roles)) {
+      // Get facilitator data.
+      $user_profile_data = \Drupal::entityTypeManager()->getStorage('user_profile_data')->loadByProperties(['user_data' => $uid]);
+      if (!empty($user_profile_data)) {
+        $user_profile_data = reset($user_profile_data);
+        $userProfileId = $user_profile_data->id();
+        $view->setArguments([$userProfileId]);
+      }
+      else {
+        $view->setArguments([]);
+      }
+    }
+  }
+  if ($view->id() == 'my_certifications') {
+    $user_email = \Drupal::currentUser()->getEmail();
+    $view->setArguments([$user_email]);
+  }
+}
+
+/**
+ * Implements hook_views_exposed_form_alter().
+ */
+function heart_custom_forms_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'views_exposed_form' && $form_state->get('view')->id() == 'event_calendar') {
+    $options = $form['category_tid']['#options'];
+    foreach ($options as $key => $value) {
+      $taxonomy = Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($key);
+      if ($taxonomy) {
+        $description = '';
+        // Clean the description by stripping tags.
+        if ($taxonomy->get('description')->value) {
+          $description = strip_tags($taxonomy->get('description')->value);
+          // Optionally, you might want to use Html::escape to prevent XSS.
+          $description = Html::escape($description);
+        }
+        $formatted_name = new FormattableMarkup(
+          '<span class="d-inline-block">@value</span><span class="d-inline-block" data-toggle="tooltip" title="@description"><img id="u1365_img" class="m-left-2" src="/themes/custom/heart/images/icon-info.svg" /></span>',
+          [
+            '@value' => $value,
+            '@description' => $description,
+          ]
+        );
+        $new_options[$key] = $formatted_name;
+      }
+      else {
+        $new_options[$key] = $value;
+      }
+    }
+    $form['category_tid']['#options'] = $new_options;
+  }
+}
+
+/**
+ * Implements hook_preprocess_menu().
+ */
+function heart_custom_forms_preprocess_menu(&$variables, $hook) {
+  $url = '';
+  $current_user = \Drupal::currentUser();
+  $uid = $current_user->id();
+  $user = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
+  $roles = $user->getRoles();
+  // Check if the user is authenticated.
+  $is_authenticated = !$current_user->isAnonymous();
+  if ($variables['menu_name'] == 'main') {
+
+    // Check current user role and assign dashboard menu url as per user role.
+    $url = '';
+    // Check if the user has the 'learner' role.
+    if (
+      in_array('learner', $roles) && !in_array('facilitator', $roles) && !in_array('parish_admin', $roles)
+      && !in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add dashboard url for learner user.
+      $url = '/learner-dashboard';
+    }
+    // Check if the user has the 'facilitator' role.
+    if (
+      in_array('facilitator', $roles) && !in_array('parish_admin', $roles)
+      && !in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add dashboard url for facilitator user.
+      $url = '/facilitator-dashboard';
+    }
+    // Check if the user has the 'parish_admin' role.
+    if (
+      in_array('parish_admin', $roles)
+      && !in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add dashboard url for parish_admin user.
+      $url = '/parish-leader-dashboard';
+    }
+    // Check if the user has the 'diocesan_admin' role.
+    if (
+      in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add dashboard url for diocesan_admin user.
+      $url = '/diocesan-dashboard';
+    }
+    // Check if the user has the 'content_editor' role.
+    if (in_array('content_editor', $roles) && !in_array('sales_staff', $roles) && !in_array('consultant', $roles)) {
+      // Add dashboard url for content_editor user.
+      $url = '/content-editor-dashboard';
+    }
+    // Check if the user has the 'sales_staff' role.
+    if (in_array('sales_staff', $roles) && !in_array('consultant', $roles)) {
+      // Add dashboard url for sales_staff user.
+      $url = '/sales-staff-dashboard';
+    }
+    // Check if the user has the 'consultant' role.
+    if (in_array('consultant', $roles)) {
+      // Add dashboard url for consultant user.
+      $url = '/consultant-dashboard';
+    }
+    if (in_array('administrator', $roles)) {
+      // Add dashboard url for consultant user.
+      $url = '/';
+    }
+
+    $menu_items = $variables['items'];
+    foreach ($menu_items as $key => &$item) {
+      // Check if user logged in than remove home menu.
+      if ($item['title'] == 'Home' && $is_authenticated) {
+        unset($variables['items'][$key]);
+      }
+      // Check if user is logged in and url is present than
+      // change dashboard menu url as per role.
+      if ($url && $item['title'] == 'dashboard' && $is_authenticated) {
+        $variables['items'][$key]['url'] = Url::fromUserInput($url);
+      }
+    }
+  }
+  if ($variables['menu_name'] == 'dashboard-right-menus') {
+    $allowed_titles = [];
+
+    // Check if the user has the 'learner' role.
+    if (
+      in_array('learner', $roles) && !in_array('facilitator', $roles) && !in_array('parish_admin', $roles)
+      && !in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // No specific allowed titles for learner in this example.
+      $allowed_titles = [];
+    }
+
+    // Check if the user has the 'facilitator' role or similar roles.
+    if (
+      in_array('facilitator', $roles) && !in_array('parish_admin', $roles)
+      && !in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add 'Management Dashboard' to the allowed titles for these roles.
+      $allowed_titles[] = 'Manage Students';
+    }
+
+    // Check if the user has the 'parish admin' role or similar roles.
+    if (
+      in_array('parish_admin', $roles)
+      || in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add 'Management Dashboard' to the allowed titles for these roles.
+      $allowed_titles[] = 'Management Dashboard';
+    }
+
+    // Check if the user has the 'content_editor' role.
+    if (in_array('content_editor', $roles) && !in_array('sales_staff', $roles) && !in_array('consultant', $roles)) {
+      // Add 'Management Content' to the allowed titles for these roles.
+      $allowed_titles[] = 'Manage Content';
+    }
+
+    // Check if the user has the 'content_editor' role.
+    if (in_array('sales_staff', $roles) || in_array('consultant', $roles)) {
+      // Add 'Management Content' to the allowed titles for these roles.
+      $allowed_titles[] = 'Manage Accounts';
+    }
+
+    if (!in_array('administrator', $roles)) {
+      // Filter the menu items based on the allowed titles.
+      // Get the current menu items.
+      $menu_items = $variables['items'];
+      foreach ($menu_items as $key => $item) {
+        // Remove the item if its title is not in the allowed titles.
+        if (!in_array($item['title'], $allowed_titles)) {
+          unset($variables['items'][$key]);
+        }
+      }
+    }
+  }
+  if ($variables['menu_name'] == 'manage-menu') {
+    $allowed_titles = [];
+
+    // Check if the user has the 'learner' role.
+    if (
+      in_array('learner', $roles) && !in_array('facilitator', $roles) && !in_array('parish_admin', $roles)
+      && !in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // No specific allowed titles for learner in this example.
+      $allowed_titles = [];
+    }
+
+    // Check if the user has the 'facilitator' role.
+    if (
+      in_array('facilitator', $roles) && !in_array('parish_admin', $roles)
+      && !in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add 'Dashboard' to the allowed titles for these roles.
+      $allowed_titles[] = 'Dashboard';
+      // Add Dashboard url for facilitator user.
+      $url = '/facilitator-dashboard';
+    }
+    // Check if the user has the 'parish_admin' role or 'diocesan_admin' role.
+    if (
+      in_array('parish_admin', $roles)
+      || in_array('diocesan_admin', $roles) && !in_array('content_editor', $roles) && !in_array('sales_staff', $roles)
+      && !in_array('consultant', $roles)
+    ) {
+      // Add 'Dashboard', 'Certificates' to the allowed titles for these roles.
+      $allowed_titles = ['Dashboard', 'Certificates'];
+      // Check  and add Dashboard url for parish_admin and diocesan_admin.
+      if (in_array('parish_admin', $roles)) {
+        $url = '/parish-leader-dashboard';
+      }
+      elseif (in_array('diocesan_admin', $roles)) {
+        $url = '/diocesan-dashboard';
+      }
+    }
+    // Check if the user has the 'content_editor' role or 'diocesan_admin' role.
+    if (in_array('content_editor', $roles) && !in_array('sales_staff', $roles) && !in_array('consultant', $roles)) {
+      // Add 'Dashboard', 'Zoom Webinars', 'Manage Events' to
+      // the allowed titles for these roles.
+      $allowed_titles = ['Dashboard', 'Zoom Webinars', 'Manage Events'];
+      // Add Dashboard url for content_editor user.
+      $url = '/content-editor-dashboard';
+    }
+
+    // Check if the user has the 'sales_staff' role or consultant role.
+    if (in_array('sales_staff', $roles) || in_array('consultant', $roles)) {
+      // Add 'Dashboard','Certificates','Vault' to
+      // the allowed titles for these roles.
+      $allowed_titles = ['Dashboard', 'Certificates', 'Vault'];
+      // Check  and add Dashboard url for parish_admin and diocesan_admin.
+      if (in_array('sales_staff', $roles)) {
+        $url = '/sales-staff-dashboard';
+      }
+      elseif (in_array('consultant', $roles)) {
+        $url = '/consultant-dashboard';
+      }
+    }
+
+    if (!in_array('administrator', $roles)) {
+      // Filter the menu items based on the allowed titles.
+      $menu_items = $variables['items'];
+      foreach ($menu_items as $key => $item) {
+        if (!empty($item) && !in_array(trim($item['title']), $allowed_titles)) {
+          // Remove menu item from page if its not in allowed_titles.
+          unset($variables['items'][$key]);
+        }
+        // Check if user is logged in and url is present than
+        // change dashboard menu url as per role.
+        if ($url && $item['title'] == 'Dashboard' && $is_authenticated) {
+          $variables['items'][$key]['url'] = Url::fromUserInput($url);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: user_profile_data_save_action
+label: 'Save user profile datas'
+type: user_profile_data
+plugin: entity:save_action:user_profile_data
+configuration: {  }

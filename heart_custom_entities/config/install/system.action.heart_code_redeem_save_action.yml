@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_code_redeem_save_action
+label: 'Save heart code redeems'
+type: heart_code_redeem
+plugin: entity:save_action:heart_code_redeem
+configuration: {  }

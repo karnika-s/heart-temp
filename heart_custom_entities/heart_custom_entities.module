@@ -1,0 +1,423 @@
+<?php
+
+/**
+ * @file
+ * Module file for custom entities.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Theme preprocess hook to disable the learner's role.
+ */
+function heart_custom_entities_preprocess_input__checkbox(&$variables) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if ($route_name == 'entity.user_profile_data.add_form' || $route_name == 'entity.user_profile_data.canonical') {
+    if (isset($variables['element']['#title']) && (strtolower($variables['element']['#title']->__toString()) == 'learner')) {
+      $variables['attributes']['disabled'] = TRUE;
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function heart_custom_entities_views_pre_render(ViewExecutable $view) {
+
+  // Check if the view is the one we want to target.
+  if ($view->id() == 'rl_library') {
+    // Attach the library to the view.
+    $view->element['#attached']['library'][] = 'heart_custom_entities/heart_custom_entities';
+  }
+  if ($view->storage->id() == 'event_calendar' && $view->getDisplay()->display['id'] == 'event_calendar_block') {
+
+    // Get views results.
+    $results = $view->result;
+
+    $request = \Drupal::request();
+
+    // Check if the register_sort parameter is present in the URL.
+    $sort = $request->query->get('sort_by');
+
+    $encountered_product_ids = [];
+    if ($sort != NULL) {
+      if ($sort == 'register_sort') {
+
+        // Get the current user.
+        $current_user = \Drupal::currentUser();
+
+        // Get the database connection service.
+        $db = \Drupal::database();
+
+        // Construct the subquery to fetch the product IDs.
+        $subquery = $db->select('heart_user_ref_data', 'h');
+        $subquery->addField('h', 'ref_entity_id');
+        $subquery->condition('h.uid', $current_user->id());
+        $subquery->condition('h.ref_entity_type', 'commerce_product');
+        $subquery->condition('h.ref_entity_bundle', 'events');
+        $ref_entity_ids = $subquery->execute()->fetchCol();
+
+        // Separate registered and unregistered events without duplicates.
+        $registered_events = [];
+        $unregistered_events = [];
+
+        foreach ($results as $key => $result) {
+          if (in_array($result->product_id_1, $ref_entity_ids) && !isset($encountered_product_ids[$result->product_id_1])) {
+            $registered_events[] = $result;
+            $encountered_product_ids[$result->product_id_1] = TRUE;
+          }
+          elseif (!isset($encountered_product_ids[$result->product_id_1])) {
+            $unregistered_events[] = $result;
+            $encountered_product_ids[$result->product_id_1] = TRUE;
+          }
+        }
+        // Merge the two arrays.
+        $sorted_result = array_merge($registered_events, $unregistered_events);
+
+        // Important to set index values for view results rendering.
+        foreach ($sorted_result as $key => $row) {
+          $row->index = $key;
+        }
+
+        // Add sorted result to the view.
+        $view->result = $sorted_result;
+        $view->total_rows = count($sorted_result);
+      }
+      else {
+        // If the register sort is not there,avoid duplication.
+        foreach ($results as $key => $result) {
+          if (!isset($encountered_product_ids[$result->product_id_1])) {
+            $unregistered_events[] = $result;
+            $encountered_product_ids[$result->product_id_1] = TRUE;
+          }
+          // Important to set index values for view results rendering.
+          foreach ($unregistered_events as $key => $row) {
+            $row->index = $key;
+          }
+
+          // Add sorted result to the view.
+          $view->result = $unregistered_events;
+          $view->total_rows = count($unregistered_events);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view().
+ */
+function heart_custom_entities_preprocess_views_view(&$variables) {
+  // Check if the view is the one we want to target.
+  if ($variables['view']->id() == 'rl_library') {
+    // Attach the CSS file to the view.
+    $variables['#attached']['library'][] = 'heart_custom_entities/heart_custom_entities';
+  }
+}
+
+/**
+ * Add form display dependencies.
+ */
+function heart_custom_entities_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if($form_id == 'user_profile_data_edit_form'){
+    $form['user_data']['widget'][0]['#disabled'] = true;
+  }
+  if($form_id == 'user_profile_data_add_form' ||$form_id == 'user_profile_data_edit_form'){
+    $vocabulary_name = 'sub_roles';
+    $terms =  \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary_name);
+    // Populate options array for checkbox field.
+    $options = [];
+    foreach ($terms as $term) {
+      // Check if the term is a top-level term.
+        $term_name_translated = \Drupal::service('entity.repository')->getTranslationFromContext(
+          \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term->tid)
+        )->getName();
+        $options[$term->tid] = t($term_name_translated);
+      
+    }
+    $form['sub_role']['widget']['#options'] = $options;
+  }
+  if ($form_id == 'heart_custom_forms_event_add_edit') {
+    if (isset($form['categories'])) {
+      // Add a custom placeholder to the chosen field.
+      $form['categories']['#attributes']['data-placeholder'] = t('- select -');
+
+      // Ensure Chosen is enabled on the field.
+      $form['categories']['#chosen'] = TRUE;
+
+      // Optionally, alter other attributes like classes or default values.
+      $form['categories']['#attributes']['class'][] = 'chosen-enable';
+    }
+    if (isset($form['keywords'])) {
+      // Add a custom placeholder to the chosen field.
+      $form['keywords']['#attributes']['data-placeholder'] = t('- select -');
+
+      // Ensure Chosen is enabled on the field.
+      $form['keywords']['#chosen'] = TRUE;
+
+      // Optionally, alter other attributes like classes or default values.
+      $form['keywords']['#attributes']['class'][] = 'chosen-enable';
+    }
+  }
+  // Check if the form is for your custom entity.
+  if ($form_id == 'pdf_resource_edit_form' || $form_id == 'pdf_resource_add_form') {
+    // Add #states property to the fields based on the value of 'item_cost'.
+    $form['rl_price']['#states'] = [
+      'visible' => [
+        ':input[name="item_cost"]' => ['value' => 'priced'],
+      ],
+    ];
+    $form['nav_item_number']['#states'] = [
+      'visible' => [
+        ':input[name="item_cost"]' => ['value' => 'priced'],
+      ],
+    ];
+  }
+
+  if ($form_id == 'event_edit_form' || $form_id == 'event_add_form') {
+    // Add #states property to the fields based on the value of 'item_cost'.
+    $form['price']['#states'] = [
+      'visible' => [
+        ':input[name="item_cost"]' => ['value' => 'priced'],
+      ],
+    ];
+    $form['nav_item_number']['#states'] = [
+      'visible' => [
+        ':input[name="item_cost"]' => ['value' => 'priced'],
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ */
+function heart_custom_entities_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
+  // Get current language.
+  $language_manager = \Drupal::service('language_manager');
+  $current_language = $language_manager->getCurrentLanguage()->getId();
+  $view = $form_state->getStorage('view');
+  if ($form_id == 'views_exposed_form' && $view['view']->id() == 'video_library' && $view["display"]["id"] == 'video_library_page') {
+
+    // Add JavaScript to trigger form submission on select change.
+    $form['video_category_target_id']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['video_keywords_target_id']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['items_per_page']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['sort_by']['#attributes']['onchange'] = 'this.form.submit();';
+
+    // Get the current language.
+    $language_manager = \Drupal::service('language_manager');
+    $current_language = $language_manager->getCurrentLanguage()->getId();
+
+    // Fetch categories using a dynamic query.
+    $database = \Drupal::database();
+    $query = $database->select('taxonomy_term_field_data', 't');
+    $query->fields('t', ['tid', 'name'])
+      // Replace with your vocabulary machine name.
+      ->condition('t.vid', 'rl_categories')
+      // Filter by current language.
+      ->condition('t.langcode', $current_language);
+
+    $categories = $query->execute()->fetchAllKeyed();
+
+    // Fetch keywords using a dynamic query.
+    $query = $database->select('taxonomy_term_field_data', 't');
+    $query->fields('t', ['tid', 'name'])
+      // Replace with your vocabulary machine name.
+      ->condition('t.vid', 'rl_keywords')
+      // Filter by current language.
+      ->condition('t.langcode', $current_language);
+
+    $keywords = $query->execute()->fetchAllKeyed();
+
+    // Prepare the options for categories.
+    $cat_options = ['' => t('ALL')] + $categories;
+
+    // Prepare the options for keywords.
+    $key_options = ['' => t('ALL')] + $keywords;
+
+    // Now that we have options, we'll change the render array of the form.
+    $form["video_category_target_id"]["#type"] = 'select';
+    $form["video_category_target_id"]["#options"] = $cat_options;
+    $form["video_category_target_id"]["#size"] = 1;
+
+    $form["video_keywords_target_id"]["#type"] = 'select';
+    $form["video_keywords_target_id"]["#options"] = $key_options;
+    $form["video_keywords_target_id"]["#size"] = 1;
+  }
+
+  if ($form_id == 'views_exposed_form' && $view['view']->id() == 'certificate_listing') {
+    // Add JavaScript to trigger form submission on select change.
+    $form['sort_by']['#attributes']['onchange'] = 'this.form.submit();';
+  }
+  if ($form_id == 'views_exposed_form' && $view['view']->id() == 'resource_library' && $view["display"]["id"] == 'resource_library_page') {
+
+    // Add JavaScript to trigger form submission on select change.
+    $form['rl_category_target_id']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['rl_keywords_target_id']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['pdf_resource_product_title']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['items_per_page']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['sort_by']['#attributes']['onchange'] = 'this.form.submit();';
+
+    // Fetch categories using a dynamic query.
+    $database = \Drupal::database();
+    $query = $database->select('taxonomy_term_field_data', 't');
+    $query->fields('t', ['tid', 'name'])
+      // Replace with your vocabulary machine name.
+      ->condition('t.vid', 'rl_categories')
+      // Filter by current language.
+      ->condition('t.langcode', $current_language);
+
+    $categories = $query->execute()->fetchAllKeyed();
+
+    // Fetch keywords using a dynamic query.
+    $query = $database->select('taxonomy_term_field_data', 't');
+    $query->fields('t', ['tid', 'name'])
+      // Replace with your vocabulary machine name.
+      ->condition('t.vid', 'rl_keywords')
+      // Filter by current language.
+      ->condition('t.langcode', $current_language);
+
+    $keywords = $query->execute()->fetchAllKeyed();
+
+    // Prepare the options for categories.
+    $cat_options = ['' => t('- Select Topics -')] + $categories;
+
+    // Prepare the options for keywords.
+    $key_options = ['' => t('- Select Categories -')] + $keywords;
+
+    // Now that we have options, we'll change the render array of the form.
+    $form["rl_category_target_id"]["#type"] = 'select';
+    $form["rl_category_target_id"]["#options"] = $cat_options;
+    $form["rl_category_target_id"]["#size"] = 1;
+
+    $form["rl_keywords_target_id"]["#type"] = 'select';
+    $form["rl_keywords_target_id"]["#options"] = $key_options;
+    $form["rl_keywords_target_id"]["#size"] = 1;
+  }
+
+  if ($form_id == 'views_exposed_form' && $view['view']->id() == 'event_calendar' && $view["display"]["id"] == 'event_calendar_block') {
+    // Add div classes for exposed filters.
+    // Add JavaScript to trigger form submission on select change.
+    $form['sort_by']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['items_per_page']['#attributes']['onchange'] = 'this.form.submit();';
+  }
+
+  if ($form_id == 'views_exposed_form' && $view['view']->id() == 'my_course' && $view["display"]["id"] == 'page_1') {
+
+    // Add JavaScript to trigger form submission on select change.
+    $form['items_per_page']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['sort_by']['#attributes']['onchange'] = 'this.form.submit();';
+  }
+
+  if ($form_id == 'views_exposed_form' && $view['view']->id() == 'my_register_events' && $view["display"]["id"] == 'page_1') {
+    // Add JavaScript to trigger form submission on select change.
+    $form['items_per_page']['#attributes']['onchange'] = 'this.form.submit();';
+  }
+
+  if ($form_id == 'views_exposed_form' && $view['view']->id() == 'product_vault' && $view["display"]["id"] == 'page_1') {
+    // Add JavaScript to trigger form submission on select change.
+    $form['items_per_page']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['type']['#attributes']['onchange'] = 'this.form.submit();';
+    $form['sort_by']['#attributes']['onchange'] = 'this.form.submit();';
+  }
+
+  // dump($form_id);
+  // dump($view['view']->id());
+  // dump($view["display"]["id"]);
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function heart_custom_entities_views_query_alter($view, $query) {
+  if ($view->storage->id() == 'video_library' && $view->getDisplay()->display['id'] == 'video_library_page') {
+    // Add the product_id field with groupby function.
+    $query->addField('commerce_product_field_data', 'product_id', '', ['function' => 'groupby']);
+    // Adding group by to remove duplicates.
+    $query->addGroupBy('commerce_product_field_data.product_id');
+  }
+  if ($view->storage->id() == 'resource_library' && $view->getDisplay()->display['id'] == 'resource_library_page') {
+    // Add the product_id field with groupby function.
+    $query->addField('commerce_product_field_data', 'product_id', '', ['function' => 'groupby']);
+    // Adding group by to remove duplicates.
+    $query->addGroupBy('commerce_product_field_data.product_id');
+  }
+  if ($view->storage->id() == 'event_calendar' && $view->getDisplay()->display['id'] == 'upcoming_manage_event_block') {
+    // Add the product_id field with groupby function.
+    $query->addField('commerce_product_field_data', 'product_id', '', ['function' => 'groupby']);
+    // Adding group by to remove duplicates.
+    $query->addGroupBy('commerce_product_field_data.product_id');
+  }
+  if ($view->storage->id() == 'event_calendar' && $view->getDisplay()->display['id'] == 'seasonal_webinar') {
+
+    // Add the product_id field with groupby function.
+    $query->addField('commerce_product_field_data', 'product_id', '', ['function' => 'groupby']);
+    // Adding group by to remove duplicates.
+    $query->addGroupBy('commerce_product_field_data.product_id');
+  }
+  if ($view->storage->id() == 'event_calendar' && $view->getDisplay()->display['id'] == 'event_calendar_block') {
+    // Add the product_id field with groupby function.
+    $query->addField('commerce_product_field_data', 'product_id', '', ['function' => 'groupby']);
+    // Adding group by to remove duplicates.
+    $query->addGroupBy('commerce_product_field_data.product_id');
+  }
+  if ($view->storage->id() == 'event_calendar' && $view->getDisplay()->display['id'] == 'previous_manage_event_block') {
+    // Add the product_id field with groupby function.
+    $query->addField('commerce_product_field_data', 'product_id', '', ['function' => 'groupby']);
+    // Adding group by to remove duplicates.
+    $query->addGroupBy('commerce_product_field_data.product_id');
+  }
+  if ($view->storage->id() == 'upcoming_events' && ($view->getDisplay()->display['id'] == 'block_1' || $view->getDisplay()->display['id'] == 'block_2')) {
+    $query->where[1]['conditions'][2]['field'] = 'event_field_data_commerce_product__field_event_reference.visible_end_date >=' . time();
+  }
+}
+
+/**
+ * Implements hook_user_cancel().
+ */
+function heart_custom_entities_user_cancel($edit, UserInterface $account, $method): void {
+  switch ($method) {
+    case 'user_cancel_block_unpublish':
+      // Unpublish heart progress trackers.
+      $storage = \Drupal::entityTypeManager()->getStorage('heart_progress_tracker');
+      $heart_progress_tracker_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->condition('status', 1)
+        ->accessCheck(FALSE)
+        ->execute();
+      foreach ($storage->loadMultiple($heart_progress_tracker_ids) as $heart_progress_tracker) {
+        $heart_progress_tracker->set('status', FALSE)->save();
+      }
+      break;
+
+    case 'user_cancel_reassign':
+      // Anonymize heart progress trackers.
+      $storage = \Drupal::entityTypeManager()->getStorage('heart_progress_tracker');
+      $heart_progress_tracker_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->accessCheck(FALSE)
+        ->execute();
+      foreach ($storage->loadMultiple($heart_progress_tracker_ids) as $heart_progress_tracker) {
+        $heart_progress_tracker->setOwnerId(0)->save();
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_predelete() for user entities.
+ */
+function heart_custom_entities_user_predelete(UserInterface $account): void {
+  // Delete heart progress trackers that belong to this account.
+  $storage = \Drupal::entityTypeManager()->getStorage('heart_progress_tracker');
+  $heart_progress_tracker_ids = $storage->getQuery()
+    ->condition('uid', $account->id())
+    ->accessCheck(FALSE)
+    ->execute();
+  $storage->delete(
+    $storage->loadMultiple($heart_progress_tracker_ids)
+  );
+}

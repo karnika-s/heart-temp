@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_email_template_save_action
+label: 'Save emailtemplates'
+type: heart_email_template
+plugin: entity:save_action:heart_email_template
+configuration: {  }

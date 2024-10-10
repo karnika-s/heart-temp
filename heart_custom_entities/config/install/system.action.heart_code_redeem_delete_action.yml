@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_code_redeem_delete_action
+label: 'Delete heart code redeems'
+type: heart_code_redeem
+plugin: entity:delete_action:heart_code_redeem
+configuration: {  }

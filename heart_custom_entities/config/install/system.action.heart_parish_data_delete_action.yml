@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_parish_data_delete_action
+label: 'Delete heart parish datas'
+type: heart_parish_data
+plugin: entity:delete_action:heart_parish_data
+configuration: {  }

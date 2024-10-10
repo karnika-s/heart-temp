@@ -1,0 +1,86 @@
+administer user_profile_data:
+  title: 'Administer user profile datas'
+  restrict access: true
+
+administer zoom_profile_data:
+  title: 'Administer zoom profile data'
+  restrict access: true
+
+administer pdf_resource:
+  title: 'Administer pdf resources'
+  restrict access: true
+
+administer event:
+  title: 'Administer events'
+  restrict access: true
+
+administer heart_video_resource:
+  title: 'Administer heart video resources'
+  restrict access: true
+view heart_video_resource:
+  title: 'View heart video resource'
+edit heart_video_resource:
+  title: 'Edit heart video resource'
+delete heart_video_resource:
+  title: 'Delete heart video resource'
+create heart_video_resource:
+  title: 'Create heart video resource'
+
+administer heart_diocese_data:
+  title: 'Administer heart diocese datas'
+  restrict access: true
+view heart_diocese_data:
+  title: 'View heart diocese data'
+edit heart_diocese_data:
+  title: 'Edit heart diocese data'
+delete heart_diocese_data:
+  title: 'Delete heart diocese data'
+create heart_diocese_data:
+  title: 'Create heart diocese data'
+
+administer heart_course:
+  title: 'Administer heart courses'
+  restrict access: true
+
+administer heart_email_template:
+  title: 'Administer emailtemplates'
+  restrict access: true
+
+administer course_product:
+  title: 'Administer course products'
+  restrict access: true
+
+administer heart_license:
+  title: 'Administer heart licenses'
+  restrict access: true
+
+administer heart_parish_data:
+  title: 'Administer heart parish datas'
+  restrict access: true
+
+administer heart_class:
+  title: 'Administer heart classes'
+  restrict access: true
+
+administer heart_progress_tracker types:
+  title: 'Administer heart progress tracker types'
+  description: 'Maintain the types of heart progress tracker entity.'
+  restrict access: true
+
+administer class_invitation:
+  title: 'Administer class invitations'
+administer heart_user_ref_data:
+  title: 'Administer heart user ref datas'
+  restrict access: true
+
+administer heart_certificate:
+  title: 'Administer certificates'
+  restrict access: true
+
+administer heart_code_redeem:
+  title: 'Administer heart code redeems'
+  restrict access: true
+
+administer heart_access_code:
+  title: 'Administer heart access codes'
+  restrict access: true

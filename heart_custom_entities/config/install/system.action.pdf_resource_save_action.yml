@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: pdf_resource_save_action
+label: 'Save PDF resource'
+type: pdf_resource
+plugin: entity:save_action:pdf_resource
+configuration: {  }

@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_access_code_save_action
+label: 'Save heart access codes'
+type: heart_access_code
+plugin: entity:save_action:heart_access_code
+configuration: {  }

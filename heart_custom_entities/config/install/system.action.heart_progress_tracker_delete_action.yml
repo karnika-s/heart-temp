@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - heart_custom_entities
+id: heart_progress_tracker_delete_action
+label: 'Delete heart progress trackers'
+type: heart_progress_tracker
+plugin: entity:delete_action:heart_progress_tracker
+configuration: {  }

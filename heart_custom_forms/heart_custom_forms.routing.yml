@@ -1,0 +1,267 @@
+heart_custom_forms.user_registration:
+  path: '/user/registration'
+  defaults:
+    # _title: 'Register Here'
+    _form: 'Drupal\heart_custom_forms\Form\RegistrationForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.users_edit_form:
+  path: '/user-profile/{id}/edit'
+  defaults:
+    _title: ''
+    _form: 'Drupal\heart_custom_forms\Form\UserRegistrationForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.my_account_form:
+  path: '/user-profile/edit'
+  defaults:
+    _title: ''
+    _form: 'Drupal\heart_custom_forms\Form\UserProfileForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.add_pdf_resource_form:
+  path: '/resource-pdf-form/add'
+  defaults:
+    _title: 'Add PDF Resource'
+    _form: 'Drupal\heart_custom_forms\Form\ResourcePdfForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'content_editor+administrator'
+
+heart_custom_forms.edit_pdf_resource_form:
+  path: '/resource-pdf-form/edit/{id}'
+  defaults:
+    _title: 'Edit PDF Resource'
+    _form: 'Drupal\heart_custom_forms\Form\ResourcePdfForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'content_editor+administrator'
+
+heart_custom_forms.add_events_form:
+  path: '/event-form/add'
+  defaults:
+    _title: 'New Event'
+    _form: 'Drupal\heart_custom_forms\Form\EventForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'content_editor+administrator'
+
+heart_custom_forms.edit_events_form:
+  path: '/event-form/edit/{event_id}'
+  defaults:
+    _title: 'New Event'
+    _form: 'Drupal\heart_custom_forms\Form\EventForm'
+  requirements:
+    _permission: 'access content'
+    id: '\d+'
+    _role: 'content_editor+administrator'
+
+heart_custom_forms.event_register:
+  path: '/event-register'
+  defaults:
+    _title: 'Event Registration'
+    _form: 'Drupal\heart_custom_forms\Form\EventRegisterForm'
+  requirements:
+    _permission: 'access content'
+    id: '\d+'
+
+heart_custom_forms.publish_products:
+  path: '/product/publish/{id}'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\PublishProductsController::publish'
+  requirements:
+    _permission: 'access content'
+    id: '\d+'
+
+heart_custom_forms.email_template_form:
+  path: '/email-template-form/add'
+  defaults:
+    _title: 'Email Template Form'
+    _form: 'Drupal\heart_custom_forms\Form\EmailTemplateForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.email_template_form_edit:
+  path: '/email-template-form/edit/{template_id}'
+  defaults:
+    _title: 'Email Template edit'
+    _form: 'Drupal\heart_custom_forms\Form\EmailTemplateForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.webinar_reports_form:
+  path: '/webinar/reports'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\ReportsWebinarForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'content_editor+administrator'
+
+heart_custom_forms.heart_course_add:
+  path: '/heart-course-form/add'
+  defaults:
+    _title: 'Heart Course Add'
+    _form: 'Drupal\heart_custom_forms\Form\HeartCourseForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.heart_course_edit:
+  path: '/heart-course-form/edit/{id}'
+  defaults:
+    _title: 'Heart Course Edit'
+    _form: 'Drupal\heart_custom_forms\Form\HeartCourseForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.add_license_form:
+  path: '/add/license'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\AddLicenseForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'content_editor+administrator'
+
+heart_custom_forms.course_product_add:
+  path: '/course-product-form/{heart_course_id}/add'
+  defaults:
+    _title: 'Course Product Add'
+    _form: 'Drupal\heart_custom_forms\Form\CourseProductForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.course_product_edit:
+  path: '/course-product-form/{heart_course_id}/edit/{course_product_id}'
+  defaults:
+    _title: 'Course Product Edit'
+    _form: 'Drupal\heart_custom_forms\Form\CourseProductForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.add_parish_form:
+  path: '/add/parish'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\AddParishForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'sales_staff+administrator'
+
+heart_custom_forms.reorder_license_form:
+  path: '/reorder-license-form'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\ReorderLicenseForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.add_class_form:
+  path: '/add/class-form'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\ClassSetupForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'diocesan_admin+sales_staff+administrator'
+
+heart_custom_forms.manage_class_detail_form:
+  path: '/manage-class/{id}'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\ManageClassDetailsForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'diocesan_admin+sales_staff+administrator'
+
+heart_custom_forms.class_add_more_license_form:
+  path: '/add-more-license-class/{id}'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\ClassAddMoreLicensesForm'
+  requirements:
+    _permission: 'access content'
+    _role: 'diocesan_admin+sales_staff+administrator'
+
+heart_custom_forms.accept_invite:
+  path: '/class-facilatator/accept/{user_id}/{class_id}'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::accept'
+    _title: 'Accept Invitation'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.reject_invite:
+  path: '/class-facilatator/reject/{user_id}/{class_id}'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::reject'
+    _title: 'Reject Invitation'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.resend_invite:
+  path: '/class-facilatator/resend-invite/{user_id}/{class_id}'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::resend'
+    _title: 'Resend Invitation'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.cancel_invite:
+  path: '/class-facilatator/cancel-invite/{user_id}/{class_invitation_id}'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::cancel'
+    _title: 'Cancel Invitation'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.manage_class_detail:
+  path: '/manage-class-detail/{id}'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::classDetailForm'
+    _title: 'Manage Class Details'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.redeem_code:
+  path: '/heart-custom-forms/redeem-code'
+  defaults:
+    _title: 'Redeem Code'
+    _form: 'Drupal\heart_custom_forms\Form\RedeemCodeForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.access_code:
+  path: '/heart/access-code'
+  defaults:
+    _title: 'Create Access Code'
+    _form: 'Drupal\heart_custom_forms\Form\AddAccessCodeForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.heart_drop_user_class:
+  path: '/drop/class-user/{class_id}/{user_id}'
+  defaults:
+    _form: 'Drupal\heart_custom_forms\Form\DropUserFromClassForm'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.manage_user_detail:
+  path: '/user-profile-data/{id}/edit'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::userProfileEditForm'
+    _title: 'Manage Class Details'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.manage_user_classes:
+  path: '/user-classes-data/{id}'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::userClassDataForm'
+    _title: 'Manage Class Details'
+  requirements:
+    _permission: 'access content'
+
+heart_custom_forms.promot_front:
+  path: '/promot-fron/page'
+  defaults:
+    _controller: '\Drupal\heart_custom_forms\Controller\InviteAcceptRejectController::promotFront'
+    _title: 'Promot Front'
+  requirements:
+    _permission: 'access content'

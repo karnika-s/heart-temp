@@ -1,0 +1,10 @@
+entity.heart_progress_tracker.edit_form:
+  route_name: entity.heart_progress_tracker.edit_form
+  group: heart_progress_tracker
+  title: 'Edit'
+
+entity.heart_progress_tracker.delete_form:
+  route_name: entity.heart_progress_tracker.delete_form
+  group: heart_progress_tracker
+  title: 'Delete'
+  weight: 10
